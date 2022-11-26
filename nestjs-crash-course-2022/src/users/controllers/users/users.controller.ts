@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, UsePipes, ValidationPipe, Version } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
 import { UsersService } from 'src/users/services/users/users.service';
@@ -7,7 +7,7 @@ import { UsersService } from 'src/users/services/users/users.service';
 export class UsersController {
     constructor(private userService: UsersService) {}
 
-    @Get()
+    @Get('all')
     getUsers() {
         return this.userService.fetchUsers();
     }
@@ -16,13 +16,14 @@ export class UsersController {
     @UsePipes(new ValidationPipe())
     createUser(@Body() userData: CreateUserDto ) {
         console.log(userData);
-        return {};
+        return this.userService.createUser(userData);
     }   
 
     @Get(':id')
     getUserById(@Param('id', ParseIntPipe) id: number) {
-        console.log(id)
-        return { id };
+        const user = this.userService.getUserById(id);
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        return user;
     }
 
 }

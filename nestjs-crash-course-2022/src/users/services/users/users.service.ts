@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CreateUserType } from 'src/utils/types';
 
 @Injectable()
 export class UsersService {
@@ -10,5 +11,14 @@ export class UsersService {
     fetchUsers() {
         return this.fakeUsers;
     }
-    // Parei em 56m
+
+    createUser(userDetails: CreateUserType){
+        this.fakeUsers.push(userDetails);
+        return;
+    }
+
+    getUserById(id: number) {
+        return this.fakeUsers[id];
+    }
+
 }
